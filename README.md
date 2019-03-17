@@ -12,3 +12,6 @@ After installing all the required packages, just execute the main file using com
 
 # Screenshot:
 <img src = "screenshot.png">
+<br>
+<br>
+<img src = "screenshot1.png">
