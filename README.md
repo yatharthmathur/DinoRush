@@ -1,5 +1,6 @@
 # DinoRush
-Classic Google Chrome Dinosaur game using PyGame and OpenGL. Currently without textures.
+Classic Google Chrome Dinosaur game using PyGame and OpenGL. Added incomplete textures. Needs some work. Mechanics are fully functional.
+GUI to be added.
 
 
 # Requirements :
