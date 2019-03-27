@@ -43,7 +43,7 @@ def main():
                     quit()
                 if event.type == pygame.KEYDOWN:
                     if(event.key == K_SPACE or event.key == K_w or event.key == K_UP):
-                        if player.y <=60:
+                        if player.y <=35:
                             space = 1
 
                     if event.key == K_s or event.key == K_DOWN:
@@ -51,6 +51,7 @@ def main():
 
                     if event.key == K_ESCAPE:
                         paused = 1
+                        print("Your score is : ", score)
                         print("Press escape to exit or any other key to continue.")
 
                 if event.type == pygame.KEYUP:
@@ -59,6 +60,7 @@ def main():
 
             if collision:
                 paused = 1
+                print("GAME OVER : Your score is : ", score)
                 print("Press escape to exit or any other key to continue.")
 
             #if height is less than 200 the player moves up
@@ -127,8 +129,11 @@ def main():
 
 
             player.render()
-
+            glRasterPos2f(700,500)
+            for i in range(0,len(string)):
+                glutBitmapCharacter(GLUT_BITMAP_8_BY_13, string)
             pygame.display.flip()
+
 
 
         events = pygame.event.get()
@@ -155,7 +160,7 @@ def main():
                         lose = 0
                         paused = 0
 
-                        print("GAME OVER\nYOUR SCORE WAS : ", score)
+
                         score = 0
 
                         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)

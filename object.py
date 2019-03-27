@@ -3,6 +3,7 @@ from OpenGL import *
 from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
+from OpenGL.GLUT import *
 import random
 import math
 import time
@@ -17,13 +18,19 @@ BIRD_SPEED=[-2.5,0]
 PLAYER_SIZE=(35,70)
 g = 0.08
 textures=[0,0,0,0,0]
+string = "GAME OVER"
+w = glutBitmapLength(GLUT_BITMAP_8_BY_13,string)
 #window properties
 
 
 def init():
     gluOrtho2D(0,800,0,600)
-    glClearColor(1,1,1,0)
+    glClearColor(0,0,0,1)
+    glClearDepth(1)
+    glutInitDisplayMode(GLUT_SINGLE|GLUT_RGBA)
 
+    glEnable(GL_BLEND)
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
 
 
@@ -40,7 +47,9 @@ def loadTexture():
 
     textures[0] = glGenTextures(1)
     glBindTexture(GL_TEXTURE_2D, textures[0])
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData)
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE)
+    glAlphaFunc(GL_LESS, 0.2)
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
@@ -55,7 +64,9 @@ def loadTexture():
 
     textures[1] = glGenTextures(1)
     glBindTexture(GL_TEXTURE_2D, textures[1])
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData)
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE)
+    glAlphaFunc(GL_LESS, 0.2)
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
@@ -70,7 +81,9 @@ def loadTexture():
 
     textures[2] = glGenTextures(1)
     glBindTexture(GL_TEXTURE_2D, textures[2])
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData)
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE)
+    glAlphaFunc(GL_LESS, 0.2)
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
@@ -85,7 +98,9 @@ def loadTexture():
 
     textures[3] = glGenTextures(1)
     glBindTexture(GL_TEXTURE_2D, textures[3])
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData)
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE)
+    glAlphaFunc(GL_LESS, 0.2)
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
@@ -101,7 +116,9 @@ def loadTexture():
 
     textures[4] = glGenTextures(1)
     glBindTexture(GL_TEXTURE_2D, textures[4])
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData)
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE)
+    glAlphaFunc(GL_LESS, 0.2)
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
@@ -153,26 +170,26 @@ class Player:
             glBindTexture(GL_TEXTURE_2D, textures[1])
             glBegin(GL_QUADS)
             glTexCoord2f(0,0)
-            glVertex(self.x-PLAYER_SIZE[0]/2, self.y-PLAYER_SIZE[1]/2)
+            glVertex(self.x-PLAYER_SIZE[0]/2, self.y-PLAYER_SIZE[1]/2, 1)
             glTexCoord2f(0,1)
-            glVertex(self.x-PLAYER_SIZE[0]/2, self.y+PLAYER_SIZE[1]/2)
+            glVertex(self.x-PLAYER_SIZE[0]/2, self.y+PLAYER_SIZE[1]/2, 1)
             glTexCoord2f(1,1)
-            glVertex(self.x+PLAYER_SIZE[0]/2, self.y+PLAYER_SIZE[1]/2)
+            glVertex(self.x+PLAYER_SIZE[0]/2, self.y+PLAYER_SIZE[1]/2, 1)
             glTexCoord2f(1,0)
-            glVertex(self.x+PLAYER_SIZE[0]/2, self.y-PLAYER_SIZE[1]/2)
+            glVertex(self.x+PLAYER_SIZE[0]/2, self.y-PLAYER_SIZE[1]/2, 1)
             glEnd()
             glFlush()
         else:
             glBindTexture(GL_TEXTURE_2D, textures[2])
             glBegin(GL_QUADS)
             glTexCoord2f(0,0)
-            glVertex(self.x-PLAYER_SIZE[0]/2, self.y-PLAYER_SIZE[1]/4 - PLAYER_SIZE[1]/4)
+            glVertex(self.x-PLAYER_SIZE[0]/2, self.y-PLAYER_SIZE[1]/4 - PLAYER_SIZE[1]/4, 1)
             glTexCoord2f(0,1)
-            glVertex(self.x-PLAYER_SIZE[0]/2, self.y+PLAYER_SIZE[1]/4 - PLAYER_SIZE[1]/4)
+            glVertex(self.x-PLAYER_SIZE[0]/2, self.y+PLAYER_SIZE[1]/4 - PLAYER_SIZE[1]/4, 1)
             glTexCoord2f(1,1)
-            glVertex(self.x+PLAYER_SIZE[0]/2, self.y+PLAYER_SIZE[1]/4 - PLAYER_SIZE[1]/4)
+            glVertex(self.x+PLAYER_SIZE[0]/2, self.y+PLAYER_SIZE[1]/4 - PLAYER_SIZE[1]/4, 1)
             glTexCoord2f(1,0)
-            glVertex(self.x+PLAYER_SIZE[0]/2, self.y-PLAYER_SIZE[1]/4 - PLAYER_SIZE[1]/4)
+            glVertex(self.x+PLAYER_SIZE[0]/2, self.y-PLAYER_SIZE[1]/4 - PLAYER_SIZE[1]/4, 1)
             glEnd()
             glFlush()
 
@@ -184,17 +201,21 @@ class Bird:
         self.y=random.randint(65,y)
         self.id = 0
     def render(self):
+
+
+
         glBindTexture(GL_TEXTURE_2D, textures[3])
-        #draw Bird wrt to centre of its square
-        glBegin(GL_POLYGON)
+        #draw Bird  wrt to centre of its square
+
+        glBegin(GL_QUADS)
         glTexCoord2f(0,0)
-        glVertex(self.x-BIRD_SIZE[0]/2, self.y-BIRD_SIZE[1]/2)
+        glVertex(self.x-BIRD_SIZE[0]/2, self.y-BIRD_SIZE[1]/2, 1)
         glTexCoord2f(0,1)
-        glVertex(self.x-BIRD_SIZE[0]/2, self.y+BIRD_SIZE[1]/2)
+        glVertex(self.x-BIRD_SIZE[0]/2, self.y+BIRD_SIZE[1]/2, 1)
         glTexCoord2f(1,1)
-        glVertex(self.x+BIRD_SIZE[0]/2, self.y+BIRD_SIZE[1]/2)
+        glVertex(self.x+BIRD_SIZE[0]/2, self.y+BIRD_SIZE[1]/2, 1)
         glTexCoord2f(1,0)
-        glVertex(self.x+BIRD_SIZE[0]/2, self.y-BIRD_SIZE[1]/2)
+        glVertex(self.x+BIRD_SIZE[0]/2, self.y-BIRD_SIZE[1]/2, 1)
         glEnd()
 
     def move(self,sx,sy):
@@ -210,15 +231,15 @@ class Cacti:
     def render(self):
         glBindTexture(GL_TEXTURE_2D, textures[4])
         #Draw cactus wrt to its centre
-        glBegin(GL_POLYGON)
+        glBegin(GL_QUADS)
         glTexCoord2f(0,0)
-        glVertex(self.x-CACT_SIZE[0]/2, self.y-CACT_SIZE[1]/2,1)
+        glVertex(self.x-CACT_SIZE[0]/2, self.y-CACT_SIZE[1]/2, 1)
         glTexCoord2f(0,1)
-        glVertex(self.x-CACT_SIZE[0]/2, self.y+CACT_SIZE[1]/2,1)
+        glVertex(self.x-CACT_SIZE[0]/2, self.y+CACT_SIZE[1]/2, 1)
         glTexCoord2f(1,1)
-        glVertex(self.x+CACT_SIZE[0]/2, self.y+CACT_SIZE[1]/2,1)
+        glVertex(self.x+CACT_SIZE[0]/2, self.y+CACT_SIZE[1]/2, 1)
         glTexCoord2f(1,0)
-        glVertex(self.x+CACT_SIZE[0]/2, self.y-CACT_SIZE[1]/2,1)
+        glVertex(self.x+CACT_SIZE[0]/2, self.y-CACT_SIZE[1]/2, 1)
         glEnd()
 
     def move(self,sx,sy):
@@ -245,7 +266,7 @@ def collisionBird(birds,player):
         for bird in birds:
             if player.x+PLAYER_SIZE[0]/2 >= bird.x-BIRD_SIZE[0]/2 and player.x-PLAYER_SIZE[0]/2 <= bird.x + BIRD_SIZE[0]/2:
                 if not player.ducking:
-                    if player.y+PLAYER_SIZE[1]/2 >= bird.y-BIRD_SIZE[1]/2 :
+                    if player.y+PLAYER_SIZE[1]/2 >= bird.y-BIRD_SIZE[1]/2 and player.y-PLAYER_SIZE[1]/2 <= bird.y+BIRD_SIZE[1]/2:
                         return 1
 
 def collisionCactus(cacti,player):
