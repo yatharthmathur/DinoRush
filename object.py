@@ -1,11 +1,11 @@
 import pygame
-import OpenGL
+from OpenGL import *
 from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
 import random
 import math
-
+import time
 #game settings
 DISPLAY=(800,600)
 CACT_SIZE=(35,70)
@@ -14,12 +14,115 @@ CACT_SPEED=[-2.5,0]
 BIRD_SIZE=(35,35)
 BIRD_SPEED=[-2.5,0]
 
-PLAYER_SIZE=(35,120)
+PLAYER_SIZE=(35,70)
 g = 0.08
+textures=[0,0,0,0,0]
 #window properties
+
+
 def init():
     gluOrtho2D(0,800,0,600)
     glClearColor(1,1,1,0)
+
+
+
+
+
+def loadTexture():
+
+
+    textureSurface = pygame.image.load('assets/background.jpg')
+    textureData = pygame.image.tostring(textureSurface, "RGBA", 1)
+    width = textureSurface.get_width()
+    height = textureSurface.get_height()
+
+    glEnable(GL_TEXTURE_2D)
+
+    textures[0] = glGenTextures(1)
+    glBindTexture(GL_TEXTURE_2D, textures[0])
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+
+    textureSurface = pygame.image.load('assets/walking.png')
+    textureData = pygame.image.tostring(textureSurface, "RGBA", 1)
+    width = textureSurface.get_width()
+    height = textureSurface.get_height()
+
+    glEnable(GL_TEXTURE_2D)
+
+    textures[1] = glGenTextures(1)
+    glBindTexture(GL_TEXTURE_2D, textures[1])
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+
+    textureSurface = pygame.image.load('assets/ducking.png')
+    textureData = pygame.image.tostring(textureSurface, "RGBA", 1)
+    width = textureSurface.get_width()
+    height = textureSurface.get_height()
+
+    glEnable(GL_TEXTURE_2D)
+
+    textures[2] = glGenTextures(1)
+    glBindTexture(GL_TEXTURE_2D, textures[2])
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+
+    textureSurface = pygame.image.load('assets/bird.png')
+    textureData = pygame.image.tostring(textureSurface, "RGBA", 1)
+    width = textureSurface.get_width()
+    height = textureSurface.get_height()
+
+    glEnable(GL_TEXTURE_2D)
+
+    textures[3] = glGenTextures(1)
+    glBindTexture(GL_TEXTURE_2D, textures[3])
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+
+
+    textureSurface = pygame.image.load('assets/pipe.png')
+    textureData = pygame.image.tostring(textureSurface, "RGBA", 1)
+    width = textureSurface.get_width()
+    height = textureSurface.get_height()
+
+    glEnable(GL_TEXTURE_2D)
+
+    textures[4] = glGenTextures(1)
+    glBindTexture(GL_TEXTURE_2D, textures[4])
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+
+    return textures
+
+
+def background():
+    glBindTexture(GL_TEXTURE_2D, textures[0])
+    glBegin(GL_QUADS)
+    glTexCoord2f(0.0, 0.0)
+    glVertex3f(0, 0, -1)
+    glTexCoord2f(1.0, 0.0)
+    glVertex3f(800, 0, -1)
+    glTexCoord2f(1.0, 1.0)
+    glVertex3f(800,  600, -1)
+    glTexCoord2f(0.0, 1.0)
+    glVertex3f(0,  600, -1)
+    glEnd()
+    glFlush()
 
 class Player:
     def __init__(self,x=200,y=60,ducking=0,mass=2):
@@ -27,16 +130,17 @@ class Player:
         self.y=y
         self.mass=mass
         self.ducking=ducking
+        self.id=0
 
     def jump(self):
         if(not self.ducking):
             self.y+=(2*g*200 - 2*g*(self.y-60))**0.5
 
     def gravity(self):
-        if(self.y >= 60):
+        if(self.y >= PLAYER_SIZE[1]/2):
             self.y-=((2*g*abs(self.y-260))**0.5)
-        if(self.y < 60):
-            self.y=60
+        if(self.y < PLAYER_SIZE[1]/2):
+            self.y=PLAYER_SIZE[1]/2
 
     def duck(self,v):
         if(self.y <= 60):
@@ -44,35 +148,52 @@ class Player:
 
 
     def render(self):
+
         if(not self.ducking):
-            glColor(0,1,0)
-            glBegin(GL_LINE_LOOP)
+            glBindTexture(GL_TEXTURE_2D, textures[1])
+            glBegin(GL_QUADS)
+            glTexCoord2f(0,0)
             glVertex(self.x-PLAYER_SIZE[0]/2, self.y-PLAYER_SIZE[1]/2)
+            glTexCoord2f(0,1)
             glVertex(self.x-PLAYER_SIZE[0]/2, self.y+PLAYER_SIZE[1]/2)
+            glTexCoord2f(1,1)
             glVertex(self.x+PLAYER_SIZE[0]/2, self.y+PLAYER_SIZE[1]/2)
+            glTexCoord2f(1,0)
             glVertex(self.x+PLAYER_SIZE[0]/2, self.y-PLAYER_SIZE[1]/2)
             glEnd()
+            glFlush()
         else:
-            glColor(0,1,0)
-            glBegin(GL_LINE_LOOP)
-            glVertex(self.x-PLAYER_SIZE[0]/2, self.y-PLAYER_SIZE[1]/4 - 30)
-            glVertex(self.x-PLAYER_SIZE[0]/2, self.y+PLAYER_SIZE[1]/4 - 30)
-            glVertex(self.x+PLAYER_SIZE[0]/2, self.y+PLAYER_SIZE[1]/4 - 30)
-            glVertex(self.x+PLAYER_SIZE[0]/2, self.y-PLAYER_SIZE[1]/4 - 30)
+            glBindTexture(GL_TEXTURE_2D, textures[2])
+            glBegin(GL_QUADS)
+            glTexCoord2f(0,0)
+            glVertex(self.x-PLAYER_SIZE[0]/2, self.y-PLAYER_SIZE[1]/4 - PLAYER_SIZE[1]/4)
+            glTexCoord2f(0,1)
+            glVertex(self.x-PLAYER_SIZE[0]/2, self.y+PLAYER_SIZE[1]/4 - PLAYER_SIZE[1]/4)
+            glTexCoord2f(1,1)
+            glVertex(self.x+PLAYER_SIZE[0]/2, self.y+PLAYER_SIZE[1]/4 - PLAYER_SIZE[1]/4)
+            glTexCoord2f(1,0)
+            glVertex(self.x+PLAYER_SIZE[0]/2, self.y-PLAYER_SIZE[1]/4 - PLAYER_SIZE[1]/4)
             glEnd()
+            glFlush()
+
 
 #To define the behaviour of bird
 class Bird:
-    def __init__(self,x=825,y=150):
+    def __init__(self,x=825,y=80):
         self.x=x
-        self.y=random.randint(115,y)
+        self.y=random.randint(65,y)
+        self.id = 0
     def render(self):
-        glColor(0,0,0)
+        glBindTexture(GL_TEXTURE_2D, textures[3])
         #draw Bird wrt to centre of its square
-        glBegin(GL_LINE_LOOP)
+        glBegin(GL_POLYGON)
+        glTexCoord2f(0,0)
         glVertex(self.x-BIRD_SIZE[0]/2, self.y-BIRD_SIZE[1]/2)
+        glTexCoord2f(0,1)
         glVertex(self.x-BIRD_SIZE[0]/2, self.y+BIRD_SIZE[1]/2)
+        glTexCoord2f(1,1)
         glVertex(self.x+BIRD_SIZE[0]/2, self.y+BIRD_SIZE[1]/2)
+        glTexCoord2f(1,0)
         glVertex(self.x+BIRD_SIZE[0]/2, self.y-BIRD_SIZE[1]/2)
         glEnd()
 
@@ -85,14 +206,19 @@ class Cacti:
     def __init__(self,x=825,y=35):
         self.x=x
         self.y=y
+        self.id = 0
     def render(self):
-        glColor(0,0,0)
+        glBindTexture(GL_TEXTURE_2D, textures[4])
         #Draw cactus wrt to its centre
-        glBegin(GL_LINE_LOOP)
-        glVertex(self.x-CACT_SIZE[0]/2, self.y-CACT_SIZE[1]/2)
-        glVertex(self.x-CACT_SIZE[0]/2, self.y+CACT_SIZE[1]/2)
-        glVertex(self.x+CACT_SIZE[0]/2, self.y+CACT_SIZE[1]/2)
-        glVertex(self.x+CACT_SIZE[0]/2, self.y-CACT_SIZE[1]/2)
+        glBegin(GL_POLYGON)
+        glTexCoord2f(0,0)
+        glVertex(self.x-CACT_SIZE[0]/2, self.y-CACT_SIZE[1]/2,1)
+        glTexCoord2f(0,1)
+        glVertex(self.x-CACT_SIZE[0]/2, self.y+CACT_SIZE[1]/2,1)
+        glTexCoord2f(1,1)
+        glVertex(self.x+CACT_SIZE[0]/2, self.y+CACT_SIZE[1]/2,1)
+        glTexCoord2f(1,0)
+        glVertex(self.x+CACT_SIZE[0]/2, self.y-CACT_SIZE[1]/2,1)
         glEnd()
 
     def move(self,sx,sy):
@@ -112,11 +238,12 @@ def remove(entities):
         if(entity.x < 0):
             del entity
 
+
+#collision functions
 def collisionBird(birds,player):
     if(birds):
         for bird in birds:
             if player.x+PLAYER_SIZE[0]/2 >= bird.x-BIRD_SIZE[0]/2 and player.x-PLAYER_SIZE[0]/2 <= bird.x + BIRD_SIZE[0]/2:
-
                 if not player.ducking:
                     if player.y+PLAYER_SIZE[1]/2 >= bird.y-BIRD_SIZE[1]/2 :
                         return 1
