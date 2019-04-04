@@ -17,9 +17,8 @@ BIRD_SPEED=[-2.5,0]
 
 PLAYER_SIZE=(35,70)
 g = 0.08
-textures=[0,0,0,0,0]
+textures=[0,0,0,0,0,0]
 string = "GAME OVER"
-w = glutBitmapLength(GLUT_BITMAP_8_BY_13,string)
 #window properties
 
 
@@ -123,6 +122,24 @@ def loadTexture():
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+
+    textureSurface = pygame.image.load('assets/gameover.png')
+    textureData = pygame.image.tostring(textureSurface, "RGBA", 1)
+    width = textureSurface.get_width()
+    height = textureSurface.get_height()
+
+    glEnable(GL_TEXTURE_2D)
+
+    textures[5] = glGenTextures(1)
+    glBindTexture(GL_TEXTURE_2D, textures[5])
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE)
+    glAlphaFunc(GL_LESS, 0.6)
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+
 
     return textures
 
@@ -275,3 +292,18 @@ def collisionCactus(cacti,player):
             if player.x+PLAYER_SIZE[0]/2 >= cactus.x-CACT_SIZE[0]/2 and player.x-PLAYER_SIZE[0]/2 <= cactus.x + CACT_SIZE[0]/2:
                 if player.y-PLAYER_SIZE[1]/2 <= cactus.y+CACT_SIZE[1]/2 :
                     return 1
+
+def gameOver():
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+    glBindTexture(GL_TEXTURE_2D, textures[5])
+    glBegin(GL_QUADS)
+    glTexCoord2f(0.0, 0.0)
+    glVertex(0, 0, 1)
+    glTexCoord2f(1.0, 0.0)
+    glVertex(800, 0, 1)
+    glTexCoord2f(1.0, 1.0)
+    glVertex(800,  600, 1)
+    glTexCoord2f(0.0, 1.0)
+    glVertex(0,  600, 1)
+    glEnd()
+    glFlush()

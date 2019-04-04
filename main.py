@@ -122,16 +122,14 @@ def main():
 
             if(collisionBird(birds,player)):
                 collision = 1
-
+                gameOver()
             if(collisionCactus(cacti,player)):
                 collision = 1
-
+                gameOver()
 
 
             player.render()
-            glRasterPos2f(700,500)
-            for i in range(0,len(string)):
-                glutBitmapCharacter(GLUT_BITMAP_8_BY_13, string)
+
             pygame.display.flip()
 
 
@@ -163,7 +161,6 @@ def main():
 
                         score = 0
 
-                        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
                         pygame.display.flip()
                     else:
