@@ -23,6 +23,7 @@ string = "GAME OVER"
 
 
 def init():
+    glutInit()
     gluOrtho2D(0,800,0,600)
     glClearColor(0,0,0,1)
     glClearDepth(1)
@@ -293,17 +294,28 @@ def collisionCactus(cacti,player):
                 if player.y-PLAYER_SIZE[1]/2 <= cactus.y+CACT_SIZE[1]/2 :
                     return 1
 
-def gameOver():
+def gameOver(score):
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+    draw_text("SCORE IS : "+str(int(score)), DISPLAY[0] / 2-50, 550)
+    draw_text("Press escape to exit.",DISPLAY[0]/2-100,200)
+    draw_text("Press any other key to continue.",DISPLAY[0]/2-120,180)
     glBindTexture(GL_TEXTURE_2D, textures[5])
     glBegin(GL_QUADS)
     glTexCoord2f(0.0, 0.0)
-    glVertex(0, 0, 1)
+    glVertex(0, 0, 0.8)
     glTexCoord2f(1.0, 0.0)
-    glVertex(800, 0, 1)
+    glVertex(800, 0, 0.8)
     glTexCoord2f(1.0, 1.0)
-    glVertex(800,  600, 1)
+    glVertex(800,  600, 0.8)
     glTexCoord2f(0.0, 1.0)
-    glVertex(0,  600, 1)
+    glVertex(0,  600, 0.8)
     glEnd()
     glFlush()
+
+def draw_text(text, x, y):
+    glDisable(GL_TEXTURE_2D)
+    glRasterPos3f(x,y,1)
+    for x in text:
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24,ord(x))
+    glFlush()
+    glEnable(GL_TEXTURE_2D)

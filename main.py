@@ -27,13 +27,14 @@ def main():
     while True:
 
 
+
         while not paused:
             background()
-            score += 1
+            score += 0.1
 
             #to refresh each cycle frame
-
-            if(score % 800 == 0):
+            draw_text(str(int(score)), DISPLAY[0] / 2, 550)
+            if(score % 100 == 0):
                 fps+=5
             clock.tick(fps)
             events = pygame.event.get()
@@ -51,7 +52,7 @@ def main():
 
                     if event.key == K_ESCAPE:
                         paused = 1
-                        print("Your score is : ", score)
+                        print("Your score is : ", int(score))
                         print("Press escape to exit or any other key to continue.")
 
                 if event.type == pygame.KEYUP:
@@ -60,7 +61,7 @@ def main():
 
             if collision:
                 paused = 1
-                print("GAME OVER : Your score is : ", score)
+                print("GAME OVER : Your score is : ", int(score))
                 print("Press escape to exit or any other key to continue.")
 
             #if height is less than 200 the player moves up
@@ -122,10 +123,10 @@ def main():
 
             if(collisionBird(birds,player)):
                 collision = 1
-                gameOver()
+                gameOver(score)
             if(collisionCactus(cacti,player)):
                 collision = 1
-                gameOver()
+                gameOver(score)
 
 
             player.render()
@@ -160,7 +161,7 @@ def main():
 
 
                         score = 0
-
+                        draw_text(str(int(score)), DISPLAY[0] / 2, 550)
 
                         pygame.display.flip()
                     else:
